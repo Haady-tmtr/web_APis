@@ -23,3 +23,22 @@ mvn exec:java -Dexec.mainClass="fr.univorleans.webapis.App" -Dexec.args="-l Doe 
 mvn exec:java -Dexec.mainClass="fr.univorleans.webapis.App" -Dexec.args="-l Doe -a 35"
 
 ## Question 7 :
+
+=> Créer une personne à supprimer : 
+```
+curl -X POST http://localhost:8000/api/people \
+-H 'accept: application/ld+json' \
+-H 'Content-Type: application/ld+json' \
+-d '{
+"firstname": "Lucas",
+"lastname": "Smith",
+"age": 29,
+"is_alive": true
+
+}'
+```
+
+Puis : 
+```
+mvn exec:java -Dexec.mainClass="fr.univorleans.webapis.App" -Dexec.args="-l Smith -f Lucas --delete"
+```

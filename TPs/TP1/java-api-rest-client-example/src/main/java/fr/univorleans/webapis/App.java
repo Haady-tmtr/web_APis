@@ -39,10 +39,10 @@ public class App {
             options.addOption("l", "lastname", true, "Rechercher par nom de famille");
             options.addOption("f", "firstname", true, "Filtrer par prénom");
             options.addOption("a", "age", true, "Filtrer par âge");
+            options.addOption("del", "delete", false, "Suppression de la personne sélectionnée"); // delete ne prendra pas de param, d'où le false
 
-
+            CommandLine cmd = parser.parse(options, args);
             try {
-                CommandLine cmd = parser.parse(options, args);
 
                 String searchName = cmd.getOptionValue('l');
                 String firstName = cmd.getOptionValue('f');
@@ -51,6 +51,9 @@ public class App {
 
                 // System.out.println("DEBUG: Le nom recherché est [" + searchName + "]");
                 boolean foundOne = false;
+
+                ///  Suppression :
+                boolean deleteMode = cmd.hasOption("del");
 
                 for (int i = 0; i < array.length(); i++) {
                     Person p = Person.fromJSON(array.getJSONObject(i));
@@ -74,9 +77,39 @@ public class App {
 
 
                     }
+
+
+                    // Sécurité : Si on veut supprimer, il FAUT un nom ET un prénom
+
+                    if (deleteMode && (searchName == null || firstName == null)) {
+                        System.out.println("Erreur : Pour supprimer, vous devez préciser un nom (-l) ET un prénom (-f).");
+                        return; // On arrête tout
+                    }
+
                     if (match){
-                        System.out.println(p.getFirstname() + " " + p.getLastname() + " (" + p.getAge() + " ans)");
-                        foundOne = true;
+
+                        if (deleteMode){
+                            HttpRequest deletedRequest = HttpRequest.newBuilder()
+                                    .uri(URI.create("http://localhost:8000" + p.getUri()))
+                                    .DELETE()
+                                    .build();
+
+                            HttpResponse<String> responseDelete =
+                                    httpClient.send(deletedRequest, BodyHandlers.ofString());
+
+                            if (responseDelete.statusCode() == 200 || responseDelete.statusCode() == 204){
+                                System.out.println("Suppression de " + p.getFirstname() +" " + p.getLastname() + ", de la base.");
+                                foundOne = true;
+                            }
+                            else {
+                                System.out.println("Erreur lors de la suppression de " + p.getFirstname() +" " + p.getLastname() + ", d'ID: " + p.getId());
+                            }
+                        }
+
+                        else {
+                            System.out.println(p.getFirstname() + " " + p.getLastname() + " (" + p.getAge() + " ans)");
+                            foundOne = true;
+                        }
                     }
                 }
 
@@ -89,8 +122,29 @@ public class App {
                 }
 
 
+
+
+
+
+
+
+
             } catch (Exception e) {
                 throw new RuntimeException(e);
+            }
+
+            try { // Delete
+
+
+
+
+
+
+
+
+
+            } catch (Exception e) {
+                System.out.println("Erreur de la requête de suppression");
             }
 
         } catch (Exception e) {

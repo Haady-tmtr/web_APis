@@ -45,7 +45,7 @@ public class App {
                 CommandLine cmd = parser.parse(options, args);
 
                 String searchName = cmd.getOptionValue('l');
-                String fisrtName = cmd.getOptionValue('f');
+                String firstName = cmd.getOptionValue('f');
                 String age = cmd.getOptionValue('a');
 
 
@@ -55,14 +55,28 @@ public class App {
                 for (int i = 0; i < array.length(); i++) {
                     Person p = Person.fromJSON(array.getJSONObject(i));
 
+                    boolean match = true;
 
-                    // CAS 1 : On affiche TOUT (si searchName est nul, on n'a pas filtré)
-                    // CAS 2 : On affiche si le nom correspond exactement
-                    if (searchName == null || p.getLastname().equalsIgnoreCase(searchName)){
-                        //System.out.println(p.getFirstname() + " " + p.getLastname() + " (" + p.getAge() + " ans). Son numéro est : " + p.getPhone_number());
+
+                    if (searchName != null && !p.getLastname().equalsIgnoreCase(searchName)){
+                        match  = false;
+                    }
+                    if (firstName != null && !p.getFirstname().equalsIgnoreCase(firstName)){
+                        match  = false;
+
+                        //foundOne  =true;
+                    }
+                    if (age != null){
+                        if (Integer.parseInt(age) != p.getAge()) {
+                            //System.out.println(p.getFirstname() + " " + p.getLastname() + " (" + p.getAge() + " ans)");
+                            match = false;
+                        }
+
+
+                    }
+                    if (match){
                         System.out.println(p.getFirstname() + " " + p.getLastname() + " (" + p.getAge() + " ans)");
-
-                        foundOne  =true;
+                        foundOne = true;
                     }
                 }
 

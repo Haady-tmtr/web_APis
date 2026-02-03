@@ -16,3 +16,10 @@ myapp "-lastname Doe"
 ```
 
 mvn exec:java -Dexec.mainClass="fr.univorleans.webapis.App" -Dexec.args="-l Doe"
+
+## Question 6 : 
+mvn exec:java -Dexec.mainClass="fr.univorleans.webapis.App" -Dexec.args="-l Doe -f Lili -a 35"
+mvn exec:java -Dexec.mainClass="fr.univorleans.webapis.App" -Dexec.args="-l Doe -f Lili"
+mvn exec:java -Dexec.mainClass="fr.univorleans.webapis.App" -Dexec.args="-l Doe -a 35"
+
+## Question 7 :
